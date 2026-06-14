@@ -11,6 +11,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write  # Add this to grant write permissions to the token
+
 env:
   CSV_URL: "MLProject/data/telco_customer_churn_train.csv"
   CSV_TEST_URL: "MLProject/data/telco_customer_churn_test.csv"
