@@ -12,8 +12,8 @@ on:
       - main
 
 env:
-  CSV_URL: "Workflow_CI/MLProject/data/telco_customer_churn_train.csv"
-  CSV_TEST_URL: "Workflow_CI/MLProject/data/telco_customer_churn_test.csv"
+  CSV_URL: "data/telco_customer_churn_train.csv"
+  CSV_TEST_URL: "data/telco_customer_churn_test.csv"
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Run mlflow project
         run: |
-          mlflow run Workflow_CI/MLProject --env-manager=local
+          mlflow run . --env-manager=local
 
       - name: Install Git LFS
         run: |
