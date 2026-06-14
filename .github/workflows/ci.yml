@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "mlruns/**"
+
+  pull_request:
+    branches:
+      - main
+
+env:
+  CSV_URL: "Workflow_CI/MLProject/data/telco_customer_churn_train.csv"
+  CSV_TEST_URL: "Workflow_CI/MLProject/data/telco_customer_churn_test.csv"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow pandas scikit-learn numpy
+
+      - name: Run mlflow project
+        run: |
+          mlflow run Workflow_CI/MLProject --env-manager=local
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs -y
+
+      - name: Setup Git LFS
+        run: |
+          git config --global user.name "${{ secrets.username }}"
+          git config --global user.email "${{ secrets.email }}"
+
+          git lfs install
+          git lfs track "mlruns/**"
+
+          git add .gitattributes
+          git commit -m "Track mlruns with LFS" || true
+
+      - name: Save mlruns
+        run: |
+          git config --global user.name "${{ secrets.username }}"
+          git config --global user.email "${{ secrets.email }}"
+
+          git remote set-url origin \
+          https://${{ secrets.token }}@github.com/${{ github.repository }}.git
+
+          git add -f mlruns/
+
+          git commit -m "Save mlruns from CI run" || true
+
+          git push origin main

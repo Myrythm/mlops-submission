@@ -1,0 +1,12 @@
+name: telco-customer-churn-mlflow
+ 
+conda_env: conda.yaml
+ 
+entry_points:
+  main:
+    parameters:
+      n_estimators: {type: int, default: 200}
+      max_depth: {type: int, default: 10}
+      dataset : {type: string, default: "data/telco_customer_churn_train.csv"}
+      test_dataset : {type: string, default: "data/telco_customer_churn_test.csv"} 
+    command: "python modelling.py {n_estimators} {max_depth} {dataset} {test_dataset}"
